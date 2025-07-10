@@ -1,16 +1,26 @@
 import { StatusBar } from "expo-status-bar";
-import { Text, View, ScrollView, Dimensions } from "react-native";
+import {
+  Text,
+  View,
+  ScrollView,
+  Dimensions,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Linking,
+  Pressable,
+  Platform,
+  Modal,
+} from "react-native";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Pressable, Platform } from "react-native";
-import { useRef } from "react";
+import Icon from "react-native-vector-icons/AntDesign";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   interpolateColor,
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
-import { Linking, TouchableOpacity } from "react-native";
 import { SvgXml } from "react-native-svg";
 
 import PointCube from "./PointCube";
@@ -39,8 +49,8 @@ const SocialButton = ({ iconSvg, text, iconColor }) => {
         alignItems: "center",
         overflow: "hidden",
         flexDirection: "row",
-        transitionProperty: Platform.OS === "web" ? "width" : undefined,
-        transitionDuration: Platform.OS === "web" ? "0.3s" : undefined,
+        transitionProperty: "width",
+        transitionDuration: "0.3s",
         ...(isHovered ? { width: 150, borderRadius: 5 } : null),
       }}
       onPress={() => {
@@ -92,6 +102,7 @@ const SocialButton = ({ iconSvg, text, iconColor }) => {
 };
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const SCREEN_WIDTH = Dimensions.get("window").width;
 const MotionText = motion(Text);
 const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 
@@ -101,6 +112,9 @@ export default function App() {
 
   const words = ["BEAUTIFUL", "INTERACTIVE", "ENGAGING"];
   const [wordIndex, setWordIndex] = useState(0);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -131,11 +145,12 @@ export default function App() {
     scrollY.value = event.contentOffset.y;
   });
 
-  const ShineCard = ({ children, style }) => {
+  const ShineCard = ({ children, style, onPress }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
       <Pressable
+        onPress={onPress}
         onHoverIn={() => setIsHovered(true)}
         onHoverOut={() => setIsHovered(false)}
         style={({ hovered }) => [
@@ -174,348 +189,538 @@ export default function App() {
     );
   };
 
+  const projects = [
+    {
+      title: "Music Match",
+      description:
+        "Use the Spotify API to create playlists with your friends by swiping right on your favorite songs. A fun way to discover new music together!",
+      frontend: "React Native",
+      backend: "Firebase",
+      images: [],
+      color_theme: "#1DB954",
+      },
+    {
+      title: "Beer Real",
+      description:
+        "Connect with your friend and see graphs of your and your friend's beer consumption. A fun way to track your drinking habits!",
+      frontend: "React Native",
+      backend: "Firebase, Flask",
+      color_theme: "#FBBE0A",
+    },
+    {
+      title: "Portfolio",
+      description:
+        "My personal portfolio showcasing my projects and skills.",
+      frontend: "React Native",
+      backend: "N/A",
+      color_theme: "white",
+    },
+  ];
   return (
-    <AnimatedScrollView
-      style={{ flex: 1 }}
-      onScroll={onScroll}
-      scrollEventThrottle={16}
-      showsVerticalScrollIndicator={false}
-      bounces={false}
-      alwaysBounceVertical={true}
-      pagingEnabled={true}
-    >
-      <Animated.View // START SCREEN
-        style={[
-          {
-            height: SCREEN_HEIGHT,
-            alignItems: "center",
-            justifyContent: "center",
-          },
-          animatedStyle,
-        ]}
+    <>
+      <AnimatedScrollView
+        style={{ flex: 1 }}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        alwaysBounceVertical={true}
+        pagingEnabled={true}
       >
-        <View style={StyleSheet.absoluteFill}>
-          <PointCube />
-        </View>
-
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1,
-            pointerEvents: "box-none",
-          }}
+        <Animated.View // START SCREEN
+          style={[
+            {
+              height: SCREEN_HEIGHT,
+              alignItems: "center",
+              justifyContent: "center",
+            },
+            animatedStyle,
+          ]}
         >
-          <MotionText
-            style={{
-              color: "white",
-              fontSize: 48,
-              fontWeight: "bold",
-              textTransform: "uppercase",
-              textAlign: "center",
-            }}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.5 }}
-          >
-            BUILDING{" "}
-            <AnimatePresence mode="wait">
-              <MotionText
-                key={words[wordIndex]}
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 48,
-                  textTransform: "uppercase",
-                  textAlign: "center",
-                  color: colors[wordIndex],
-                  display: "inline-block",
-                  width: 350,
-                }}
-                initial={{ opacity: 0, rotateX: 90 }}
-                animate={{ opacity: 1, rotateX: 0 }}
-                exit={{ opacity: 0, rotateX: -90 }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
-              >
-                {words[wordIndex]}
-              </MotionText>
-            </AnimatePresence>{" "}
-            USER EXPERIENCES
-          </MotionText>
-        </View>
-        <StatusBar style="auto" />
-      </Animated.View>
+          <View style={StyleSheet.absoluteFill}>
+            <PointCube />
+          </View>
 
-      <Animated.View // ABOUT ME SCREEN
-        style={[
-          {
-            minHeight: SCREEN_HEIGHT,
-            padding: 32,
-            flexDirection: "row",
-            backgroundColor: "white",
-            alignItems: "center",
-            justifyContent: "center",
-          },
-          animatedStyle,
-        ]}
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1,
+              pointerEvents: "box-none",
+            }}
+          >
+            <MotionText
+              style={{
+                color: "white",
+                fontSize: 48,
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                textAlign: "center",
+              }}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.5 }}
+            >
+              BUILDING{" "}
+              <AnimatePresence mode="wait">
+                <MotionText
+                  key={words[wordIndex]}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 48,
+                    textTransform: "uppercase",
+                    textAlign: "center",
+                    color: colors[wordIndex],
+                    display: "inline-block",
+                    width: 350,
+                  }}
+                  initial={{ opacity: 0, rotateX: 90 }}
+                  animate={{ opacity: 1, rotateX: 0 }}
+                  exit={{ opacity: 0, rotateX: -90 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                >
+                  {words[wordIndex]}
+                </MotionText>
+              </AnimatePresence>{" "}
+              USER EXPERIENCES
+            </MotionText>
+          </View>
+          <StatusBar style="auto" />
+        </Animated.View>
+
+        <Animated.View // ABOUT ME SCREEN
+          style={[
+            {
+              minHeight: SCREEN_HEIGHT,
+              padding: 32,
+              flexDirection: "row",
+              backgroundColor: "white",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+            animatedStyle,
+          ]}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "flex-end",
+              paddingRight: 24,
+            }}
+          >
+            <View style={{ alignItems: "flex-end" }}>
+              <Text
+                style={{
+                  color: "black",
+                  fontSize: 40,
+                  fontWeight: "bold",
+                  marginBottom: 12,
+                  textAlign: "right",
+                }}
+              >
+                Biel Olivé
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  Linking.openURL(
+                    "https://www.google.com/maps/place/Manresa,+Barcelona,+Catalonia"
+                  )
+                }
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={{
+                    color: "#888",
+                    fontSize: 18,
+                    textAlign: "right",
+                    textDecorationLine: "underline",
+                  }}
+                >
+                  📍 Manresa, Barcelona, Catalonia
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Vertical Divider */}
+          <View
+            style={{
+              width: 1,
+              height: 120,
+              backgroundColor: "#ccc",
+              marginHorizontal: 24,
+              alignSelf: "center",
+            }}
+          />
+
+          <View
+            style={{
+              flex: 2,
+              justifyContent: "center",
+              alignItems: "flex-start",
+              paddingLeft: 24,
+            }}
+          >
+            <Text
+              style={{
+                color: "black",
+                fontSize: 18,
+                textAlign: "left",
+                lineHeight: 32,
+                marginBottom: 8,
+              }}
+            >
+              {(() => {
+                const birthDate = new Date(2004, 1, 12);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const hasHadBirthday =
+                  today.getMonth() > birthDate.getMonth() ||
+                  (today.getMonth() === birthDate.getMonth() &&
+                    today.getDate() >= birthDate.getDate());
+                if (!hasHadBirthday) age--;
+                return `Hi! I'm Biel, a ${age} years old developer who builds beautiful and interactive user experiences.\nIn this portfolio, you'll find my personal projects.\nFeel free to explore and discover more about my work!`;
+              })()}
+            </Text>
+          </View>
+        </Animated.View>
+
+        <Animated.View // PROJECTS SCREEN
+          style={[
+            {
+              minHeight: SCREEN_HEIGHT,
+              padding: 32,
+              backgroundColor: "#f7f7f7",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+            animatedStyle,
+          ]}
+        >
+          <Text
+            style={{
+              color: "#222",
+              fontSize: 36,
+              fontWeight: "bold",
+              marginBottom: 24,
+              textAlign: "center",
+              textTransform: "uppercase",
+              letterSpacing: 2,
+              paddingBottom: 80,
+            }}
+          >
+            Projects
+          </Text>
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+            }}
+          >
+            {projects.map((project, idx) => (
+              <ShineCard
+                key={project.title}
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: 16,
+                  padding: 24,
+                  marginBottom: 20,
+                  width: "32%",
+                  height: 150,
+                  shadowColor: "#000",
+                  shadowOpacity: 0.08,
+                  shadowRadius: 8,
+                  shadowOffset: { width: 0, height: 2 },
+                  elevation: 2,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+                onPress={() => {
+                  setSelectedProject(project);
+                  setModalVisible(true);
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 24,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  {project.title}
+                </Text>
+              </ShineCard>
+            ))}
+          </View>
+        </Animated.View>
+
+        <Animated.View // CONTACT SCREEN
+          style={[
+            {
+              minHeight: SCREEN_HEIGHT,
+              padding: 32,
+              backgroundColor: "#22223b",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+            animatedStyle,
+          ]}
+        >
+          <Text
+            style={{
+              fontSize: 36,
+              fontWeight: "bold",
+              marginBottom: 24,
+              textAlign: "center",
+              textTransform: "uppercase",
+              letterSpacing: 2,
+            }}
+          >
+            Contact
+          </Text>
+          <Text
+            style={{
+              fontSize: 18,
+              textAlign: "center",
+              marginBottom: 32,
+              lineHeight: 28,
+              maxWidth: 500,
+            }}
+          >
+            Want to get in touch? Feel free to reach out for collaborations,
+            questions, or just to say hi!
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              flexWrap: "wrap",
+              padding: 10,
+            }}
+          >
+            <SocialButton iconSvg={emailSvg} text="Email" iconColor="#FF69B4" />
+            <SocialButton
+              iconSvg={linkedinSvg}
+              text="Linked In"
+              iconColor="#0e76a8"
+            />
+            <SocialButton iconSvg={githubSvg} text="Github" iconColor="#333" />
+          </View>
+        </Animated.View>
+      </AnimatedScrollView>
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
       >
         <View
           style={{
             flex: 1,
+            backgroundColor: "rgba(0,0,0,0.7)",
             justifyContent: "center",
-            alignItems: "flex-end",
-            paddingRight: 24,
+            alignItems: "center",
           }}
         >
-          <View style={{ alignItems: "flex-end" }}>
-            <Text
-              style={{
-                color: "black",
-                fontSize: 40,
-                fontWeight: "bold",
-                marginBottom: 12,
-                textAlign: "right",
-              }}
+          <motion.View
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            style={{
+              backgroundColor: "black",
+              borderRadius: 0,
+              padding: 30,
+              width: "100%",
+              height: "100%",
+              flexDirection: "column",
+              alignItems: "center",
+              position: "relative",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0,
+              shadowRadius: 0,
+              elevation: 0,
+            }}
+          >
+            <ScrollView
+              style={{ width: "100%" }}
+              contentContainerStyle={{ alignItems: "center", paddingBottom: 60, minHeight: SCREEN_HEIGHT }}
+              showsVerticalScrollIndicator={false}
             >
-              Biel Olivé
-            </Text>
-            <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  "https://www.google.com/maps/place/Manresa,+Barcelona,+Catalonia"
-                )
-              }
-              activeOpacity={0.7}
-            >
-              <Text
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
                 style={{
-                  color: "#888",
-                  fontSize: 18,
-                  textAlign: "right",
-                  textDecorationLine: "underline",
+                  position: "absolute",
+                  top: 30,
+                  right: 30,
+                  zIndex: 1,
+                  padding: 8,
                 }}
               >
-                📍 Manresa, Barcelona, Catalonia
+                <Icon name="close" size={24} color="#555" />
+              </TouchableOpacity>
+
+              {/* Títol centrat a dalt */}
+              <Text
+                style={{
+                  position: "absolute",
+                  top: 40,
+                  left: 0,
+                  right: 0,
+                  textAlign: "center",
+                  fontSize: 100,
+                  fontWeight: "100",
+                  color: "#fff",
+                  marginBottom: 15,
+                  zIndex: 1,
+                  pointerEvents: "none",
+                }}
+              >
+                {selectedProject?.title}
               </Text>
-            </TouchableOpacity>
-          </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                  width: "100%",
+                  marginBottom: 30,
+                  marginTop: 180,
+                }}
+              >
+                
+                <View style={{ flex: 2, marginRight: 250, marginLeft: 64, alignItems: "flex-start" }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#bbb",
+                      fontWeight: 15,
+                      letterSpacing: 1,
+                      marginBottom: 6,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    DESCRIPTION
+                  </Text>
+                  <View
+                    style={{
+                      height: 2,
+                      backgroundColor: "#444",
+                      opacity: 0.8,
+                      width: 280,
+                      marginBottom: 12,
+                      alignItems: "flex-start",
+                      marginRight: 2000,
+                    }}
+                  />
+                  <Text style={{ fontSize: 17, color: "#fff", lineHeight: 24, fontWeight: 15 }}>
+                    {selectedProject?.description}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "flex-start", 
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#bbb",
+                      fontWeight: 15,
+                      letterSpacing: 1,
+                      marginBottom: 6,
+                      textTransform: "uppercase",
+                      
+                    }}
+                  >
+                    TECHNOLOGIES
+                  </Text>
+                  <View
+                    style={{
+                      height: 2,
+                      backgroundColor: "#444",
+                      opacity: 0.8,
+                      width: 240, 
+                      marginBottom: 12,
+                      alignSelf: "flex-start",
+                    }}
+                  />
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#fff",
+                      textAlign: "center",
+                      marginBottom: 5,
+                      fontWeight: 15
+                    }}
+                  >
+                    Frontend: {selectedProject?.frontend || "N/A"}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#fff",
+                      textAlign: "center",
+                      marginBottom: 5,
+                      fontWeight: 15
+                    }}
+                  >
+                    Backend: {selectedProject?.backend || "N/A"}
+                  </Text>
+        
+                </View>
+              </View>
+
+              <View style={{ width: "100%", alignItems: "center", marginTop: 75, justifyContent: "center" }}>
+                
+                <View
+                  style={{
+                    borderRadius: 20,
+                    borderWidth: 2,
+                    borderColor: selectedProject?.color_theme || "#00fff7",
+                    shadowColor: selectedProject?.color_theme || "#00fff7",
+                    shadowOpacity: 0.7,
+                    shadowRadius: 30,
+                    shadowOffset: { width: 0, height: 0 },
+                    elevation: 20,
+                    backgroundColor: "#111",
+                    width: SCREEN_WIDTH * 0.7, // 70% de la pantalla
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Image
+                    source={{
+                      uri: "https://placehold.co/1080x1920.png?text=Imatge+Gran",
+                    }}
+                    style={{
+                      width: SCREEN_WIDTH * 0.7,
+                      height: (SCREEN_WIDTH * 0.7) * 0.7, // relació d'aspecte 1:0.7 (ajusta-ho si vols)
+                      borderRadius: 16,
+                      resizeMode: "cover",
+                    }}
+                  />
+                </View>
+              </View>
+            </ScrollView>
+          </motion.View>
         </View>
-
-        {/* Vertical Divider */}
-        <View
-          style={{
-            width: 1,
-            height: 120,
-            backgroundColor: "#ccc",
-            marginHorizontal: 24,
-            alignSelf: "center",
-          }}
-        />
-
-        <View
-          style={{
-            flex: 2,
-            justifyContent: "center",
-            alignItems: "flex-start",
-            paddingLeft: 24,
-          }}
-        >
-          <Text
-            style={{
-              color: "black",
-              fontSize: 18,
-              textAlign: "left",
-              lineHeight: 32,
-              marginBottom: 8,
-            }}
-          >
-            {(() => {
-              const birthDate = new Date(2004, 1, 12);
-              const today = new Date();
-              let age = today.getFullYear() - birthDate.getFullYear();
-              const hasHadBirthday =
-                today.getMonth() > birthDate.getMonth() ||
-                (today.getMonth() === birthDate.getMonth() &&
-                  today.getDate() >= birthDate.getDate());
-              if (!hasHadBirthday) age--;
-              return `Hi! I'm Biel, a ${age} years old developer who builds beautiful and interactive user experiences.\nIn this portfolio, you'll find my personal projects.\nFeel free to explore and discover more about my work!`;
-            })()}
-          </Text>
-        </View>
-      </Animated.View>
-
-      <Animated.View // PROJECTS SCREEN
-        style={[
-          {
-            minHeight: SCREEN_HEIGHT,
-            padding: 32,
-            backgroundColor: "#f7f7f7",
-            alignItems: "center",
-            justifyContent: "center",
-          },
-          animatedStyle,
-        ]}
-      >
-        <Text
-          style={{
-            color: "#222",
-            fontSize: 36,
-            fontWeight: "bold",
-            marginBottom: 24,
-            textAlign: "center",
-            textTransform: "uppercase",
-            letterSpacing: 2,
-            paddingBottom: 80,
-          }}
-        >
-          Projects
-        </Text>
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-          }}
-        >
-          <ShineCard
-            style={{
-              backgroundColor: "white",
-              borderRadius: 16,
-              padding: 24,
-              marginBottom: 20,
-              width: "32%",
-              height: 150,
-              shadowColor: "#000",
-              shadowOpacity: 0.08,
-              shadowRadius: 8,
-              shadowOffset: { width: 0, height: 2 },
-              elevation: 2,
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
-            <Text
-              style={{ fontSize: 24, fontWeight: "bold", textAlign: "center" }}
-            >
-              Music Match
-            </Text>
-          </ShineCard>
-
-          <ShineCard
-            style={{
-              backgroundColor: "white",
-              borderRadius: 16,
-              padding: 24,
-              marginBottom: 20,
-              width: "32%",
-              shadowColor: "#000",
-              shadowOpacity: 0.08,
-              shadowRadius: 8,
-              shadowOffset: { width: 0, height: 2 },
-              elevation: 2,
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              overflow: "hidden",
-              height: 150,
-            }}
-          >
-            <Text
-              style={{ fontSize: 24, fontWeight: "bold", textAlign: "center" }}
-            >
-              Beer Real
-            </Text>
-          </ShineCard>
-
-          <ShineCard
-            style={{
-              backgroundColor: "white",
-              borderRadius: 16,
-              padding: 24,
-              marginBottom: 20,
-              width: "32%",
-              shadowColor: "#000",
-              shadowOpacity: 0.08,
-              shadowRadius: 8,
-              shadowOffset: { width: 0, height: 2 },
-              elevation: 2,
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              overflow: "hidden",
-              height: 150,
-            }}
-          >
-            <Text
-              style={{ fontSize: 24, fontWeight: "bold", textAlign: "center" }}
-            >
-              Portfolio
-            </Text>
-          </ShineCard>
-        </View>
-      </Animated.View>
-
-      <Animated.View // CONTACT SCREEN
-        style={[
-          {
-            minHeight: SCREEN_HEIGHT,
-            padding: 32,
-            backgroundColor: "#22223b",
-            alignItems: "center",
-            justifyContent: "center",
-          },
-          animatedStyle,
-        ]}
-      >
-        <Text
-          style={{
-            fontSize: 36,
-            fontWeight: "bold",
-            marginBottom: 24,
-            textAlign: "center",
-            textTransform: "uppercase",
-            letterSpacing: 2,
-          }}
-        >
-          Contact
-        </Text>
-        <Text
-          style={{
-            fontSize: 18,
-            textAlign: "center",
-            marginBottom: 32,
-            lineHeight: 28,
-            maxWidth: 500,
-          }}
-        >
-          Want to get in touch? Feel free to reach out for collaborations,
-          questions, or just to say hi!
-        </Text>
-        <View
-          style={{
-            flexDirection: "row", // Per posar els botons un al costat de l'altre
-            justifyContent: "center",
-            alignItems: "center",
-            flexWrap: "wrap", // Per si els botons no caben en una sola línia
-            padding: 10,
-          }}
-        >
-          <SocialButton iconSvg={emailSvg} text="Email" iconColor="#FF69B4" />
-          <SocialButton
-            iconSvg={linkedinSvg}
-            text="Linked In"
-            iconColor="#0e76a8"
-          />
-          <SocialButton iconSvg={githubSvg} text="Github" iconColor="#333" />
-        </View>
-      </Animated.View>
-    </AnimatedScrollView>
+      </Modal>
+    </>
   );
 }
