@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~5.0.4",
+    "@expo/vector-icons": "^14.1.0",
     "@react-three/drei": "^10.4.2",
     "@react-three/fiber": "^9.2.0",
     "@types/three": "^0.178.0",
@@ -27,7 +28,8 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "^0.20.0",
     "tailwindcss": "^3.4.17",
-    "three": "^0.178.0"
+    "three": "^0.178.0",
+    "vector-icons": "^0.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

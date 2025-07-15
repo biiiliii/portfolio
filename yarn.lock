@@ -20,6 +20,62 @@
     "@jridgewell/gen-mapping" "^0.3.5"
     "@jridgewell/trace-mapping" "^0.3.24"
 
+"@angular/animations@~13.2.0", "@angular/animations@13.2.7":
+  version "13.2.7"
+  resolved "https://registry.npmjs.org/@angular/animations/-/animations-13.2.7.tgz"
+  integrity sha512-FthGqRPQ1AOcOx/NIW65xeFYkQZJ7PpXcX59Kt+qkoUzngAQEY+UUpOteG52tmL0iZSVwOCjtxRFi9w4heVgEg==
+  dependencies:
+    tslib "^2.3.0"
+
+"@angular/common@~13.2.0", "@angular/common@13.2.7":
+  version "13.2.7"
+  resolved "https://registry.npmjs.org/@angular/common/-/common-13.2.7.tgz"
+  integrity sha512-gSkv9aMz5q2ynIqSwgp5HEVVwlmpMYGVZFNZnEnezGY96Hza0eXlb/AYdqO7S3VQVvx+FXpvXP/eq/SsCw7rFA==
+  dependencies:
+    tslib "^2.3.0"
+
+"@angular/compiler@~13.2.0", "@angular/compiler@13.2.7":
+  version "13.2.7"
+  resolved "https://registry.npmjs.org/@angular/compiler/-/compiler-13.2.7.tgz"
+  integrity sha512-auRMo+k+xCQmIBkZ5UgkAAmhbpcoOUWQrJN2PQnPl88DPquui3tXC4R6RANpWCu59oT8m29FQMviHcN3ZTFl6Q==
+  dependencies:
+    tslib "^2.3.0"
+
+"@angular/core@~13.2.0", "@angular/core@13.2.7":
+  version "13.2.7"
+  resolved "https://registry.npmjs.org/@angular/core/-/core-13.2.7.tgz"
+  integrity sha512-6J6C2ymIy+cZudock25BLEZFckhqFfXOSZw5YBIoAJuntV4hckLNfRTn/dxn5qmWF/Vw60NKdhV367YYejz6Gg==
+  dependencies:
+    tslib "^2.3.0"
+
+"@angular/forms@~13.2.0":
+  version "13.2.7"
+  resolved "https://registry.npmjs.org/@angular/forms/-/forms-13.2.7.tgz"
+  integrity sha512-Did5ShmHTu52cljmNtMxUBUGEYHJ/FV5ZpKhbI7sd/VSFhXp9KWYUbfma0m7+CUJMGmpt6bmDaN0G2WS8Es1LQ==
+  dependencies:
+    tslib "^2.3.0"
+
+"@angular/platform-browser-dynamic@~13.2.0":
+  version "13.2.7"
+  resolved "https://registry.npmjs.org/@angular/platform-browser-dynamic/-/platform-browser-dynamic-13.2.7.tgz"
+  integrity sha512-3tKiUohQ8wl4hp1zYLKvMJ7GVYpg2K5dRrihtUKkJk8xUv3iuTUI0wbNCrUDZkrWc0GMhnQNXwE22gd+hKjfKg==
+  dependencies:
+    tslib "^2.3.0"
+
+"@angular/platform-browser@~13.2.0", "@angular/platform-browser@13.2.7":
+  version "13.2.7"
+  resolved "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-13.2.7.tgz"
+  integrity sha512-3rpeS2n+mfey9FqJg/NQKPiyHC47vgldWXmuz5FmOCHrOY54AaFfoiwQcdxzh6Lxx/CUVm0TlOS8S/xI9iEqXw==
+  dependencies:
+    tslib "^2.3.0"
+
+"@angular/router@~13.2.0":
+  version "13.2.7"
+  resolved "https://registry.npmjs.org/@angular/router/-/router-13.2.7.tgz"
+  integrity sha512-VzEFKyUE8CR23IbmAjmcSFY6pa4NsjaaTqT4mDYhzFeYc7R0s58Ow9d4Fy+0sWX6rzys01rcVNCg+ifJAnwYZA==
+  dependencies:
+    tslib "^2.3.0"
+
 "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.24.7", "@babel/code-frame@^7.27.1":
   version "7.27.1"
   resolved "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.27.1.tgz"
@@ -1069,7 +1125,7 @@
   resolved "https://registry.npmjs.org/@expo/sudo-prompt/-/sudo-prompt-9.3.2.tgz"
   integrity sha512-HHQigo3rQWKMDzYDLkubN5WQOYXJJE2eNqIQC2axC2iO3mHdwnIR7FgZVvHWtBwAdzBgAP0ECp8KqS8TiMKvgw==
 
-"@expo/vector-icons@^14.0.0":
+"@expo/vector-icons@^14.0.0", "@expo/vector-icons@^14.1.0":
   version "14.1.0"
   resolved "https://registry.npmjs.org/@expo/vector-icons/-/vector-icons-14.1.0.tgz"
   integrity sha512-7T09UE9h8QDTsUeMGymB4i+iqvtEeaO5VvUjryFB4tugDTG/bkzViWA74hm5pfjjDEhYMXWaX112mcvhccmIwQ==
@@ -4593,6 +4649,13 @@ run-parallel@^1.1.9:
   dependencies:
     queue-microtask "^1.2.2"
 
+"rxjs@^6.5.3 || ^7.4.0", rxjs@~7.5.0:
+  version "7.5.7"
+  resolved "https://registry.npmjs.org/rxjs/-/rxjs-7.5.7.tgz"
+  integrity sha512-z9MzKh/UcOqB3i20H6rtrlaE/CgjLOvheWK/9ILrbhROGTweAi1BaFsTT9FbwZi5Trr1qNRs+MXkhmR06awzQA==
+  dependencies:
+    tslib "^2.1.0"
+
 safe-buffer@5.2.1:
   version "5.2.1"
   resolved "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz"
@@ -5104,7 +5167,7 @@ ts-interface-checker@^0.1.9:
   resolved "https://registry.npmjs.org/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
 
-tslib@^2.4.0:
+tslib@^2.1.0, tslib@^2.3.0, tslib@^2.4.0:
   version "2.8.1"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz"
   integrity sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
@@ -5223,6 +5286,23 @@ vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
+
+vector-icons@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/vector-icons/-/vector-icons-0.1.0.tgz"
+  integrity sha512-Ng7y5hnYs+gN7vrMrE64tmxHOdUispHM2Hx3vm4WJo1G9M530C8J8Hcfh/UnXwPIsD181GIwzX2abq8ylMsmOQ==
+  dependencies:
+    "@angular/animations" "~13.2.0"
+    "@angular/common" "~13.2.0"
+    "@angular/compiler" "~13.2.0"
+    "@angular/core" "~13.2.0"
+    "@angular/forms" "~13.2.0"
+    "@angular/platform-browser" "~13.2.0"
+    "@angular/platform-browser-dynamic" "~13.2.0"
+    "@angular/router" "~13.2.0"
+    rxjs "~7.5.0"
+    tslib "^2.3.0"
+    zone.js "~0.11.4"
 
 vlq@^1.0.0:
   version "1.0.1"
@@ -5450,6 +5530,13 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zone.js@~0.11.4:
+  version "0.11.8"
+  resolved "https://registry.npmjs.org/zone.js/-/zone.js-0.11.8.tgz"
+  integrity sha512-82bctBg2hKcEJ21humWIkXRlLBBmrc3nN7DFh5LGGhcyycO2S7FN8NmdvlcKaGFDNVL4/9kFLmwmInTavdJERA==
+  dependencies:
+    tslib "^2.3.0"
 
 zustand@^4.3.2:
   version "4.5.7"

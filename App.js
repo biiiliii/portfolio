@@ -13,7 +13,7 @@ import {
   Modal,
 } from "react-native";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Icon from "react-native-vector-icons/AntDesign";
 import Animated, {
   useSharedValue,
@@ -22,6 +22,7 @@ import Animated, {
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
 import { SvgXml } from "react-native-svg";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import PointCube from "./PointCube";
 
@@ -115,6 +116,27 @@ export default function App() {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Referències per fer scroll a cada secció
+  const scrollRef = useRef();
+  const startRef = useRef();
+  const aboutRef = useRef();
+  const projectsRef = useRef();
+  const contactRef = useRef();
+
+  // Funció per fer scroll a una secció
+  const scrollToSection = (ref) => {
+    if (ref.current && scrollRef.current) {
+      ref.current.measureLayout(
+        scrollRef.current.getInnerViewNode(),
+        (x, y) => {
+          scrollRef.current.scrollTo({ y, animated: true });
+          setMenuOpen(false);
+        }
+      );
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -198,7 +220,7 @@ export default function App() {
       backend: "Firebase",
       images: [],
       color_theme: "#1DB954",
-      },
+    },
     {
       title: "Beer Real",
       description:
@@ -209,16 +231,101 @@ export default function App() {
     },
     {
       title: "Portfolio",
-      description:
-        "My personal portfolio showcasing my projects and skills.",
+      description: "My personal portfolio showcasing my projects and skills.",
       frontend: "React Native",
-      backend: "N/A",
       color_theme: "white",
     },
   ];
+
+  // Afegeix aquest hook per saber en quina secció estàs
+  const [menuColor, setMenuColor] = useState("black");
+
+  useEffect(() => {
+    // Calcula la secció segons la posició de l'scroll
+    const listener = scrollY;
+    const updateMenuColor = () => {
+      // Si estàs a la primera pantalla (fons negre)
+      if (scrollY.value < SCREEN_HEIGHT * 0.8) {
+        setMenuColor("white");
+      } else {
+        setMenuColor("black");
+      }
+    };
+
+    // Actualitza el color cada cop que scrollY canvia
+    const id = setInterval(updateMenuColor, 100);
+    return () => clearInterval(id);
+  }, [scrollY]);
+
   return (
     <>
+      {/* MENU FIX A DALT A LA DRETA */}
+      <View
+        style={{
+          position: "absolute",
+          top: 30,
+          right: 40,
+          zIndex: 1000,
+        }}
+        pointerEvents="box-none"
+      >
+        <TouchableOpacity
+          onPress={() => setMenuOpen((v) => !v)}
+          style={{
+            backgroundColor: "transparent",
+            borderRadius: 24,
+            padding: 12,
+          }}
+          activeOpacity={0.7}
+        >
+          {/* Icona de menú custom */}
+          <View style={{ width: 32, height: 32, justifyContent: "center" }}>
+            {[0, 1, 2].map((i) => (
+              <View
+                key={i}
+                style={{
+                  height: 3,
+                  backgroundColor: menuColor,
+                  marginVertical: 3,
+                  borderRadius: 2,
+                  width: 32,
+                }}
+              />
+            ))}
+          </View>
+        </TouchableOpacity>
+        {menuOpen && (
+          <View
+            style={{
+              marginTop: 10,
+              backgroundColor: "#fff",
+              borderRadius: 16,
+              padding: 16,
+              minWidth: 180,
+              shadowColor: "#000",
+              shadowOpacity: 0.2,
+              shadowRadius: 12,
+              shadowOffset: { width: 0, height: 4 },
+            }}
+          >
+            <TouchableOpacity onPress={() => scrollToSection(startRef)}>
+              <Text style={{ fontSize: 18, marginVertical: 8, color: "#22223b" }}>Inici</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => scrollToSection(aboutRef)}>
+              <Text style={{ fontSize: 18, marginVertical: 8, color: "#22223b" }}>Sobre mi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => scrollToSection(projectsRef)}>
+              <Text style={{ fontSize: 18, marginVertical: 8, color: "#22223b" }}>Projectes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => scrollToSection(contactRef)}>
+              <Text style={{ fontSize: 18, marginVertical: 8, color: "#22223b" }}>Contacte</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+
       <AnimatedScrollView
+        ref={scrollRef}
         style={{ flex: 1 }}
         onScroll={onScroll}
         scrollEventThrottle={16}
@@ -236,6 +343,7 @@ export default function App() {
             },
             animatedStyle,
           ]}
+          ref={startRef}
         >
           <View style={StyleSheet.absoluteFill}>
             <PointCube />
@@ -305,6 +413,7 @@ export default function App() {
             },
             animatedStyle,
           ]}
+          ref={aboutRef}
         >
           <View
             style={{
@@ -402,6 +511,7 @@ export default function App() {
             },
             animatedStyle,
           ]}
+          ref={projectsRef}
         >
           <Text
             style={{
@@ -475,6 +585,7 @@ export default function App() {
             },
             animatedStyle,
           ]}
+          ref={contactRef}
         >
           <Text
             style={{
@@ -519,6 +630,8 @@ export default function App() {
           </View>
         </Animated.View>
       </AnimatedScrollView>
+
+      {/* MODAL SKELETON SECTION */}
       <Modal
         visible={modalVisible}
         transparent
@@ -554,9 +667,14 @@ export default function App() {
             }}
           >
             <ScrollView
-              style={{ width: "100%" }}
-              contentContainerStyle={{ alignItems: "center", paddingBottom: 60, minHeight: SCREEN_HEIGHT }}
+              style={{ flex: 1, width: "100%" }}
+              contentContainerStyle={{
+                alignItems: "center",
+                paddingBottom: 60,
+              }}
               showsVerticalScrollIndicator={false}
+              onScroll={onScroll}
+              scrollEventThrottle={16}
             >
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
@@ -571,7 +689,6 @@ export default function App() {
                 <Icon name="close" size={24} color="#555" />
               </TouchableOpacity>
 
-              {/* Títol centrat a dalt */}
               <Text
                 style={{
                   position: "absolute",
@@ -600,8 +717,14 @@ export default function App() {
                   marginTop: 180,
                 }}
               >
-                
-                <View style={{ flex: 2, marginRight: 250, marginLeft: 64, alignItems: "flex-start" }}>
+                <View
+                  style={{
+                    flex: 2,
+                    marginRight: 250,
+                    marginLeft: 64,
+                    alignItems: "flex-start",
+                  }}
+                >
                   <Text
                     style={{
                       fontSize: 16,
@@ -625,7 +748,14 @@ export default function App() {
                       marginRight: 2000,
                     }}
                   />
-                  <Text style={{ fontSize: 17, color: "#fff", lineHeight: 24, fontWeight: 15 }}>
+                  <Text
+                    style={{
+                      fontSize: 17,
+                      color: "#fff",
+                      lineHeight: 24,
+                      fontWeight: 15,
+                    }}
+                  >
                     {selectedProject?.description}
                   </Text>
                 </View>
@@ -633,7 +763,7 @@ export default function App() {
                 <View
                   style={{
                     flex: 1,
-                    alignItems: "flex-start", 
+                    alignItems: "flex-start",
                     justifyContent: "flex-start",
                   }}
                 >
@@ -645,7 +775,6 @@ export default function App() {
                       letterSpacing: 1,
                       marginBottom: 6,
                       textTransform: "uppercase",
-                      
                     }}
                   >
                     TECHNOLOGIES
@@ -655,7 +784,7 @@ export default function App() {
                       height: 2,
                       backgroundColor: "#444",
                       opacity: 0.8,
-                      width: 240, 
+                      width: 240,
                       marginBottom: 12,
                       alignSelf: "flex-start",
                     }}
@@ -666,7 +795,7 @@ export default function App() {
                       color: "#fff",
                       textAlign: "center",
                       marginBottom: 5,
-                      fontWeight: 15
+                      fontWeight: 15,
                     }}
                   >
                     Frontend: {selectedProject?.frontend || "N/A"}
@@ -677,45 +806,50 @@ export default function App() {
                       color: "#fff",
                       textAlign: "center",
                       marginBottom: 5,
-                      fontWeight: 15
+                      fontWeight: 15,
                     }}
                   >
                     Backend: {selectedProject?.backend || "N/A"}
                   </Text>
-        
                 </View>
               </View>
 
-              <View style={{ width: "100%", alignItems: "center", marginTop: 75, justifyContent: "center" }}>
-                
+              <View style={{ width: 800, height: 500, alignSelf: "center", marginTop: 40, marginBottom: 40 }}>
                 <View
                   style={{
-                    borderRadius: 20,
-                    borderWidth: 2,
-                    borderColor: selectedProject?.color_theme || "#00fff7",
-                    shadowColor: selectedProject?.color_theme || "#00fff7",
+                    position: "absolute",
+                    top: -20,
+                    left: -20,
+                    right: -20,
+                    bottom: -20,
+                    borderRadius: 32,
+                    backgroundColor: selectedProject?.color_theme,
+                    opacity: 0.15,
+                    zIndex: 0,
+                    shadowColor: selectedProject?.color_theme,
                     shadowOpacity: 0.7,
-                    shadowRadius: 30,
+                    shadowRadius: 10,
                     shadowOffset: { width: 0, height: 0 },
-                    elevation: 20,
-                    backgroundColor: "#111",
-                    width: SCREEN_WIDTH * 0.7, // 70% de la pantalla
-                    alignItems: "center",
-                    justifyContent: "center",
+                    filter: Platform.OS === "web" ? "blur(32px)" : undefined,
                   }}
-                >
-                  <Image
-                    source={{
-                      uri: "https://placehold.co/1080x1920.png?text=Imatge+Gran",
-                    }}
-                    style={{
-                      width: SCREEN_WIDTH * 0.7,
-                      height: (SCREEN_WIDTH * 0.7) * 0.7, // relació d'aspecte 1:0.7 (ajusta-ho si vols)
-                      borderRadius: 16,
-                      resizeMode: "cover",
-                    }}
-                  />
-                </View>
+                  pointerEvents="none"
+                />
+                <Image
+                  source={{
+                    uri: selectedProject?.images?.[0],
+                  }}
+                  style={{
+                    width: 800,
+                    height: 500,
+                    borderRadius: 24,
+                    alignSelf: "center",
+                    resizeMode: "cover",
+                    borderWidth: 1,
+                    borderOpacity: 0.5,
+                    borderColor: selectedProject?.color_theme,
+                    zIndex: 1,
+                  }}
+                />
               </View>
             </ScrollView>
           </motion.View>
